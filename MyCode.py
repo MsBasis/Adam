@@ -52,19 +52,24 @@ class PepDataset(Dataset):
         
         return x, y
 
+class Bodygoals(nn.Module):
+    def __init__(self,input_size=600):
+        super().__init__()
+        
+        self.model = nn.Sequential(
+            nn.Linear(input_size, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 1),
+            nn.Sigmoid()
+        )
+    def forward(self, x):
+        return self.model(x)    
+        
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 
