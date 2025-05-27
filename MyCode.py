@@ -21,12 +21,17 @@ df_valid.to_csv(r'C:\\Studia\\Progranmy\\Adam\\valid_sequences.csv', index=False
 
 #print(f"Zapisano {len(df_valid)} poprawnych sekwencji do pliku 'valid_sequences.csv'")
 '''
+#cieply_encode
+aminokwasy2 = 'ACDEFGHIKLMNPQRSTVWY'
+aa_to_index = {aa: i for i, aa in enumerate(aminokwasy2)}
 
+def wektorowanie(seq, max_len=30):
+    encoded = np.zeros((max_len, 20), dtype=int)
 
+    for i, aa in enumerate(seq):
+        encoded[i, aa_to_index[aa]] = 1  
 
-
-
-
+    return encoded.flatten()  
 
 
 
