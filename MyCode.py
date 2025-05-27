@@ -17,10 +17,9 @@ def czy_valid(seq): #sprawdzanie poprawnych
     return isinstance(seq, str) and all(aa in aminokwasy for aa in seq) and len(seq) <= 30
 
 df_valid = df[df['Epitope - Name'].apply(czy_valid)]
-
 df_valid.to_csv(r'C:\\Studia\\Progranmy\\Adam\\valid_sequences.csv', index=False)
 
-print(f"Zapisano {len(df_valid)} poprawnych sekwencji do pliku 'valid_sequences.csv'")
+#print(f"Zapisano {len(df_valid)} poprawnych sekwencji do pliku 'valid_sequences.csv'")
 '''
 
 
