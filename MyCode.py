@@ -52,6 +52,7 @@ class PepDataset(Dataset):
         
         return x, y
 
+#stworzenie modelu (ktory zadziala za 1 razem)
 class Bodygoals(nn.Module):
     def __init__(self,input_size=600):
         super().__init__()
@@ -67,7 +68,26 @@ class Bodygoals(nn.Module):
     def forward(self, x):
         return self.model(x)    
         
+#budowanie nadzorcy dla goata    
+def locked_in(model, dataset, batch_size=64, epochs=10, lr=0.001):
+    dataloader = DataLoader(dataset,batch_size=batch_size, shuffle=True)
+    crit = nn.BCELoss()
+    poprawiacz = optim.Adam(model.parameters(),lr=lr)
     
+    for epoch in range(epochs):
+        model.train()
+        biegnaca_strata = 0.0
+        
+        for i, (x_batch,y_batch) in enumerate(dataloader):
+            poprawiacz.zero_grad()
+            outputs = model(x_batch)
+            outputs = outputs.view(-1)
+            loss = crit(outputs, y_batch)
+            loss.backward()
+            poprawiacz.step()
+            biegnaca_strata += loss.item()
+        avg_loss = biegnaca_strata / len(dataloader)
+        print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
 
     
 
