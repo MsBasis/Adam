@@ -33,7 +33,24 @@ def wektorowanie(seq, max_len=30):
 
     return encoded.flatten()  
 
-
+#przygotowanie czytalnego datasetu dla pytorcha
+class PepDataset(Dataset):
+    def __init__(self,df,max_len=30):
+        self.max_len = max_len
+        self.sequences = df['Epitope - Name'].tolist()
+        self.labels = df['assay'].astype(np.float32).tolist()
+    
+    def __len__(self):
+        return len(self.sequences)
+    
+    def __getitem__(self, index):
+        sequence = self.sequences[index]
+        label = self.labels[index]
+        encode = wektorowanie(sequence, self.max_len)
+        x = torch.tensor(encode, dtype=torch.float32)
+        y = torch.tensor(label, dtype=torch.float32)
+        
+        return x, y
 
 
 
