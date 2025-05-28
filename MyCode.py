@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
+#praise Lana cause without her this shi wouldnt work
 
 #przygotowanie csv z poprawnymi aminokwasami
 '''
@@ -95,7 +95,7 @@ def locked_in(model, dataset, batch_size=32, epochs=20, lr=0.001):
             biegnaca_strata += loss.item()
         avg_loss = biegnaca_strata / len(dataloader)
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
-    torch.save(model.state_dict(), "r'C:\\Studia\\Progranmy\\Adam\\modelImmu.pt")
+    torch.save(model.state_dict(), "modelImmu.pt")
     print("Model zapisany")
 
 #budowanie egzaminatora
