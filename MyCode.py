@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 
 #przygotowanie csv z poprawnymi aminokwasami
@@ -69,16 +71,21 @@ class Bodygoals(nn.Module):
         return self.model(x)    
         
 #budowanie nadzorcy dla goata    
-def locked_in(model, dataset, batch_size=64, epochs=10, lr=0.001):
+def locked_in(model, dataset, batch_size=32, epochs=15, lr=0.001):
     dataloader = DataLoader(dataset,batch_size=batch_size, shuffle=True)
     crit = nn.BCELoss()
     poprawiacz = optim.Adam(model.parameters(),lr=lr)
+    model.to(device)
     
+    print('OKAYYYY LETS GO')
     for epoch in range(epochs):
         model.train()
         biegnaca_strata = 0.0
         
         for i, (x_batch,y_batch) in enumerate(dataloader):
+            x_batch = x_batch.to(device)
+            y_batch = y_batch.to(device)
+            
             poprawiacz.zero_grad()
             outputs = model(x_batch)
             outputs = outputs.view(-1)
@@ -88,9 +95,6 @@ def locked_in(model, dataset, batch_size=64, epochs=10, lr=0.001):
             biegnaca_strata += loss.item()
         avg_loss = biegnaca_strata / len(dataloader)
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
-
-    
-
 
 
 
