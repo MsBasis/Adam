@@ -95,7 +95,59 @@ def locked_in(model, dataset, batch_size=32, epochs=15, lr=0.001):
             biegnaca_strata += loss.item()
         avg_loss = biegnaca_strata / len(dataloader)
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
+    torch.save(model.state_dict(), "modelImmu.pt")
+    print("Model zapisany")
+
+#budowanie egzaminatora
+def evaluate_model(model, dataset, batch_size=32):
+    dataloader = DataLoader(dataset, batch_size=batch_size)  
+    model.eval()     
+    model.to(device)
+    y_true = []
+    y_pred = []
+
+    with torch.no_grad():
+        for x_batch, y_batch in dataloader:
+            x_batch = x_batch.to(device)
+            y_batch = y_batch.to(device)
+
+            outputs = model(x_batch)
+            outputs = outputs.view(-1)
+
+            predicted = (outputs >= 0.5).float()
+            y_true.extend(y_batch.cpu().numpy())
+            y_pred.extend(predicted.cpu().numpy())
+
+    acc = accuracy_score(y_true, y_pred)
+    prec = precision_score(y_true, y_pred)
+    rec = recall_score(y_true, y_pred)
+    f1 = f1_score(y_true, y_pred)
+
+    print("Ewaluacja modelu:")
+    print(f"Accuracy :  {acc:.4f}")
+    print(f"Precision:  {prec:.4f}")
+    print(f"Recall   :  {rec:.4f}")
+    print(f"F1 Score :  {f1:.4f}")
 
 
+#przygotowanie danych do treningu
+df = pd.read_csv(r'C:\\Studia\\Progranmy\\Adam\\valid_sequences.csv')
+df_train, df_test = train_test_split(df, test_size=0.2, random_state=42)
+train_dataset = PepDataset(df_train)
+test_dataset = PepDataset(df_test)
 
 
+#2 year time skip type shi
+model = Bodygoals(input_size=600)
+locked_in(model, train_dataset, batch_size=32, epochs=15, lr=0.001)
+
+#Sabody arc
+'''
+model = Bodygoals(input_size=600)
+model.load_state_dict(torch.load("C:\\Studia\\Progranmy\\Adam\\modelImmu.pt", map_location=device))
+model.to(device)
+model.eval()
+'''
+
+#matura
+evaluate_model(model, test_dataset)
