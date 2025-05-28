@@ -176,3 +176,9 @@ def Venator(model, sequence, max_len=30):
         print("Model przewiduje: NIEAKTYWNA (0)")
 
 #Venator(model, "GIDSSHPDLKVAGGA")
+
+
+
+#to do:
+#1 comment everything
+#2 relearn venator
