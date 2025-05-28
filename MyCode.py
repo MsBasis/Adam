@@ -71,7 +71,7 @@ class Bodygoals(nn.Module):
         return self.model(x)    
         
 #budowanie nadzorcy dla goata    
-def locked_in(model, dataset, batch_size=32, epochs=15, lr=0.001):
+def locked_in(model, dataset, batch_size=32, epochs=20, lr=0.001):
     dataloader = DataLoader(dataset,batch_size=batch_size, shuffle=True)
     crit = nn.BCELoss()
     poprawiacz = optim.Adam(model.parameters(),lr=lr)
@@ -95,7 +95,7 @@ def locked_in(model, dataset, batch_size=32, epochs=15, lr=0.001):
             biegnaca_strata += loss.item()
         avg_loss = biegnaca_strata / len(dataloader)
         print(f"Epoch {epoch+1}/{epochs} - Loss: {avg_loss:.4f}")
-    torch.save(model.state_dict(), "modelImmu.pt")
+    torch.save(model.state_dict(), "r'C:\\Studia\\Progranmy\\Adam\\modelImmu.pt")
     print("Model zapisany")
 
 #budowanie egzaminatora
@@ -139,15 +139,40 @@ test_dataset = PepDataset(df_test)
 
 #2 year time skip type shi
 model = Bodygoals(input_size=600)
-locked_in(model, train_dataset, batch_size=32, epochs=15, lr=0.001)
-
-#Sabody arc
+locked_in(model, train_dataset, batch_size=32, epochs=20, lr=0.001)
 '''
+#Sabody arc
 model = Bodygoals(input_size=600)
-model.load_state_dict(torch.load("C:\\Studia\\Progranmy\\Adam\\modelImmu.pt", map_location=device))
+model.load_state_dict(torch.load("C:\\Studia\\Progranmy\\Adam\\modelImmu.pt", map_location=device, weights_only=True))
 model.to(device)
-model.eval()
 '''
 
 #matura
-evaluate_model(model, test_dataset)
+#evaluate_model(model, test_dataset)
+
+#we can finnaly use this fker
+def Venator(model, sequence, max_len=30):
+    valid_aa = set('ACDEFGHIKLMNPQRSTVWY')
+    if not isinstance(sequence, str) or any(aa not in valid_aa for aa in sequence):
+        print("Błędna sekwencja: zawiera niepoprawne znaki.")
+        return
+
+    if len(sequence) > max_len:
+        print(f"Błędna długość: sekwencja ma {len(sequence)}, a dopuszczalne to {max_len}")
+        return
+
+    encoded = wektorowanie(sequence, max_len)
+    x = torch.tensor(encoded, dtype=torch.float32).unsqueeze(0).to(device)
+
+    model.eval()
+    with torch.no_grad():
+        output = model(x).item()
+
+    print(f"Sekwencja: {sequence}")
+    print(f"Probability: {output:.4f}")
+    if output >= 0.5:
+        print("Model przewiduje: AKTYWNA (1)")
+    else:
+        print("Model przewiduje: NIEAKTYWNA (0)")
+
+#Venator(model, "GIDSSHPDLKVAGGA")
