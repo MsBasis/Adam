@@ -65,7 +65,7 @@ class Bodygoals(nn.Module):
             nn.ReLU(),
 
             nn.Linear(256, 128),
-            nn.BatchNorm1d(128),
+            nn.BatchNorm1d(128), #normalizacja, ktora wspiera stabilizacje i przyspiszenia uczenie - kinda cool ngl
             nn.ReLU(),
 
             nn.Linear(128, 64),
@@ -84,7 +84,7 @@ class Bodygoals(nn.Module):
 #budowanie nadzorcy dla goata    
 def locked_in(model, dataset, batch_size=32, epochs=20, lr=0.001):
     dataloader = DataLoader(dataset,batch_size=batch_size, shuffle=True)
-    crit = nn.BCEWithLogitsLoss()
+    crit = nn.BCEWithLogitsLoss() #dziala szybciej (nie musi byc sigmoid juz liczony w modelu)
     poprawiacz = optim.Adam(model.parameters(),lr=lr)
     model.to(device)
     
@@ -123,7 +123,7 @@ def evaluate_model(model, dataset, batch_size=32):
             y_batch = y_batch.to(device)
 
             outputs = model(x_batch)
-            outputs = torch.sigmoid(model(x_batch)).view(-1)
+            outputs = torch.sigmoid(model(x_batch)).view(-1) #handluje ten nowy zrobiony loss, zeby dalej bylo [0,1]
 
             predicted = (outputs >= 0.5).float()
             y_true.extend(y_batch.cpu().numpy())
