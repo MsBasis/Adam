@@ -60,12 +60,23 @@ class Bodygoals(nn.Module):
         super().__init__()
         
         self.model = nn.Sequential(
-            nn.Linear(input_size, 128),
+            nn.Linear(input_size, 256),
+            nn.BatchNorm1d(256),
             nn.ReLU(),
+
+            nn.Linear(256, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+
             nn.Linear(128, 64),
+            nn.BatchNorm1d(64),
             nn.ReLU(),
-            nn.Linear(64, 1),
-            nn.Sigmoid()
+
+            nn.Linear(64, 32),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+
+            nn.Linear(32, 1)
         )
     def forward(self, x):
         return self.model(x)    
@@ -73,7 +84,7 @@ class Bodygoals(nn.Module):
 #budowanie nadzorcy dla goata    
 def locked_in(model, dataset, batch_size=32, epochs=20, lr=0.001):
     dataloader = DataLoader(dataset,batch_size=batch_size, shuffle=True)
-    crit = nn.BCELoss()
+    crit = nn.BCEWithLogitsLoss()
     poprawiacz = optim.Adam(model.parameters(),lr=lr)
     model.to(device)
     
@@ -112,7 +123,7 @@ def evaluate_model(model, dataset, batch_size=32):
             y_batch = y_batch.to(device)
 
             outputs = model(x_batch)
-            outputs = outputs.view(-1)
+            outputs = torch.sigmoid(model(x_batch)).view(-1)
 
             predicted = (outputs >= 0.5).float()
             y_true.extend(y_batch.cpu().numpy())
