@@ -16,12 +16,3 @@ print(equal.head())
 # Zapisz wynik (opcjonalnie)
 equal.to_csv(r'C:\\Studia\\Progranmy\\Adam\\sum.csv', index=False)
 
-
-
-
-
-
-
-
-
-

@@ -17,7 +17,3 @@ df1.to_csv('C:\\Studia\\Progranmy\\Adam\\negative_clean2.csv', index=False)
 
 
 
-
-
-
-
